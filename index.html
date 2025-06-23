@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>هل شاهدت هذا الفيلم؟</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Tahoma, sans-serif;
+      background: linear-gradient(#0f2027, #203a43, #2c5364);
+      color: white;
+      text-align: center;
+      padding: 2rem;
+    }
+    header {
+      margin-bottom: 2rem;
+    }
+    h1 {
+      font-size: 2rem;
+    }
+    section {
+      max-width: 800px;
+      margin: auto;
+    }
+    img.mockup {
+      width: 300px;
+      border-radius: 16px;
+      margin: 2rem 0;
+      box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    }
+    .dual-lang {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+    .lang-box {
+      background-color: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      padding: 1rem;
+      text-align: left;
+    }
+    footer {
+      margin-top: 3rem;
+      opacity: 0.7;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>هل شاهدت هذا الفيلم؟ — Did You Watch This Movie?</h1>
+  </header>
+  <section class="dual-lang">
+    <div class="lang-box">
+      <h2>🇸🇦 وصف المشروع (بالعربية):</h2>
+      <p>
+        تطبيق ويب بسيط يعرض للمستخدم بوسترات لأفلام عشوائية من منصة TMDB ويطلب منه فقط اختيار ما إذا شاهد الفيلم أم لا.
+        الهدف هو مساعدة المستخدم على تتبع الأفلام التي شاهدها، مع عرض إحصائيات بسيطة حول نشاطه السينمائي. التطبيق غير تجاري ومخصص للاستخدام الشخصي والتجريبي فقط.
+      </p>
+    </div>
+
+    <div class="lang-box">
+      <h2>🇺🇸 Project Description (English):</h2>
+      <p>
+        A minimalistic web application that shows a random movie poster from TMDB and asks the user if they have watched it (Yes/No).
+        The goal is to help users track which movies they have seen and generate simple viewing statistics for personal use.
+        No commercial purpose. Built with HTML and JavaScript using TMDB API for educational and personal tracking purposes.
+      </p>
+    </div>
+
+    <img class="mockup" src="https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg" alt="App Preview">
+
+    <p><strong>🔧 التطبيق لا يزال في طور الإنشاء.</strong> | <strong>The app is under development.</strong></p>
+  </section>
+
+  <footer>
+    &copy; 2025 - Bahaa Eddine | Personal Project for TMDB API access
+  </footer>
+</body>
+</html>
