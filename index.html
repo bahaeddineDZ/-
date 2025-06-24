@@ -5,77 +5,183 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>هل شاهدت هذا الفيلم؟</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
     body {
       margin: 0;
       font-family: Tahoma, sans-serif;
-      background: linear-gradient(#0f2027, #203a43, #2c5364);
-      color: white;
-      text-align: center;
-      padding: 2rem;
-    }
-    header {
-      margin-bottom: 2rem;
-    }
-    h1 {
-      font-size: 2rem;
-    }
-    section {
-      max-width: 800px;
-      margin: auto;
-    }
-    img.mockup {
-      width: 300px;
-      border-radius: 16px;
-      margin: 2rem 0;
-      box-shadow: 0 0 20px rgba(0,0,0,0.4);
-    }
-    .dual-lang {
       display: flex;
-      flex-direction: column;
-      gap: 2rem;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      min-height: 100vh;
+      color: white;
+      transition: background-image 0.6s ease;
     }
-    .lang-box {
-      background-color: rgba(255,255,255,0.05);
-      border-radius: 12px;
+    .sidebar {
+      width: 220px;
+      background-color: #111a;
       padding: 1rem;
-      text-align: left;
+      backdrop-filter: blur(4px);
     }
-    footer {
-      margin-top: 3rem;
-      opacity: 0.7;
-      font-size: 0.9rem;
+    .sidebar h2 {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
     }
+    .sidebar button {
+      display: block;
+      width: 100%;
+      margin-bottom: 0.5rem;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      background-color: #222;
+      color: white;
+      cursor: pointer;
+      text-align: right;
+    }
+    .content {
+      flex-grow: 1;
+      padding: 2rem;
+      backdrop-filter: blur(3px);
+    }
+    img#poster {
+      width: 250px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(255,255,255,0.4);
+      margin-bottom: 1rem;
+      transition: all 0.5s ease;
+    }
+    .description {
+      margin-bottom: 1rem;
+    }
+    button.vote, button.action {
+      font-size: 1rem;
+      padding: 8px 14px;
+      margin: 6px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .yes { background-color: #4caf50; }
+    .no { background-color: #f44336; }
+    .fav { background-color: #ff4081; }
+    .later { background-color: #2196f3; }
+    .wait { background-color: #ff9800; }
+    h1 { margin-top: 0; }
   </style>
 </head>
 <body>
-  <header>
-    <h1>هل شاهدت هذا الفيلم؟ — Did You Watch This Movie?</h1>
-  </header>
-  <section class="dual-lang">
-    <div class="lang-box">
-      <h2>🇸🇦 وصف المشروع (بالعربية):</h2>
-      <p>
-        تطبيق ويب بسيط يعرض للمستخدم بوسترات لأفلام عشوائية من منصة TMDB ويطلب منه فقط اختيار ما إذا شاهد الفيلم أم لا.
-        الهدف هو مساعدة المستخدم على تتبع الأفلام التي شاهدها، مع عرض إحصائيات بسيطة حول نشاطه السينمائي. التطبيق غير تجاري ومخصص للاستخدام الشخصي والتجريبي فقط.
-      </p>
+  <div class="sidebar">
+    <h2>🎬 القائمة</h2>
+    <button onclick="login()">🔐 تسجيل الدخول</button>
+    <button onclick="showList('liked')">❤️ أفلامي المفضلة</button>
+    <button onclick="showList('watched')">✅ شاهدتها</button>
+    <button onclick="showList('notwatched')">❌ لم أشاهدها</button>
+    <button onclick="showList('mustwatch')">⏳ يجب أن أشاهدها قريبًا</button>
+    <button onclick="showList('upcoming')">🚀 أفلام منتظرة</button>
+  </div>
+
+  <div class="content">
+    <h1>هل شاهدت هذا الفيلم؟</h1>
+    <img id="poster" src="" alt="بوستر الفيلم">
+    <p class="description" id="description"></p>
+    <div>
+      <button class="vote yes" onclick="vote(true)">✅ نعم</button>
+      <button class="vote no" onclick="vote(false)">❌ لا</button>
     </div>
-
-    <div class="lang-box">
-      <h2>🇺🇸 Project Description (English):</h2>
-      <p>
-        A minimalistic web application that shows a random movie poster from TMDB and asks the user if they have watched it (Yes/No).
-        The goal is to help users track which movies they have seen and generate simple viewing statistics for personal use.
-        No commercial purpose. Built with HTML and JavaScript using TMDB API for educational and personal tracking purposes.
-      </p>
+    <div>
+      <button class="action fav" onclick="addTo('liked')">❤️ أضف للمفضلة</button>
+      <button class="action later" onclick="addTo('mustwatch')">⏳ للمشاهدة قريبًا</button>
+      <button class="action wait" onclick="addTo('upcoming')">🚀 من الأفلام المنتظرة</button>
     </div>
+    <ul id="list"></ul>
+  </div>
 
-    <img class="mockup" src="https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg" alt="App Preview">
+  <script>
+    const apiKey = 'YOUR_TMDB_API_KEY';
+    let movies = [], index = 0;
+    const poster = document.getElementById("poster");
+    const desc = document.getElementById("description");
+    const list = document.getElementById("list");
 
-    <p><strong>🔧 التطبيق لا يزال في طور الإنشاء.</strong> | <strong>The app is under development.</strong></p>
-  </section>
+    const dataStore = {
+      watched: [],
+      notwatched: [],
+      liked: [],
+      mustwatch: [],
+      upcoming: []
+    };
 
-  <footer>
-    &copy; 2025 - Bahaa Eddine | Personal Project for TMDB API access
-  </footer>
+    async function fetchMovies() {
+      const res = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}&language=ar`);
+      const data = await res.json();
+      movies = data.results;
+      showMovie();
+    }
+
+    function showMovie() {
+      if (index >= movies.length) {
+        poster.style.display = 'none';
+        desc.innerText = '🎉 انتهت القائمة';
+        return;
+      }
+      const movie = movies[index];
+      poster.src = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
+      desc.innerText = movie.overview || 'لا يوجد وصف متاح.';
+      document.body.style.backgroundImage = `url('https://image.tmdb.org/t/p/original${movie.backdrop_path}')`;
+    }
+
+    function vote(seen) {
+      const movie = movies[index];
+      if (seen) {
+        poster.style.filter = 'brightness(150%)';
+        dataStore.watched.push(movie);
+      } else {
+        poster.style.opacity = '0';
+        dataStore.notwatched.push(movie);
+      }
+      setTimeout(() => {
+        poster.style.filter = '';
+        poster.style.opacity = '1';
+        index++;
+        showMovie();
+      }, 600);
+    }
+
+    function addTo(listName) {
+      const movie = movies[index];
+      if (!dataStore[listName].some(m => m.id === movie.id)) {
+        dataStore[listName].push(movie);
+        alert(`✅ تمت إضافة "${movie.title}" إلى ${translateListName(listName)}.`);
+      }
+    }
+
+    function showList(type) {
+      list.innerHTML = '';
+      dataStore[type].forEach(movie => {
+        const li = document.createElement("li");
+        li.textContent = movie.title;
+        list.appendChild(li);
+      });
+    }
+
+    function translateListName(key) {
+      return {
+        liked: 'المفضلة',
+        watched: 'قائمة المشاهدة',
+        notwatched: 'قائمة غير المشاهدة',
+        mustwatch: 'للمشاهدة لاحقًا',
+        upcoming: 'الأفلام المنتظرة'
+      }[key] || key;
+    }
+
+    function login() {
+      alert('تم تسجيل الدخول كمستخدم محلي.');
+    }
+
+    fetchMovies();
+  </script>
 </body>
 </html>
