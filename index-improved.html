@@ -1,0 +1,132 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>هل شاهدته؟</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css">
+  <style>
+    body {
+      background-color: #121212;
+      color: white;
+      font-family: 'Tahoma', sans-serif;
+    }
+    .movie-card {
+      background-color: #1e1e1e;
+      border-radius: 20px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+    .movie-card img {
+      width: 100%;
+      border-radius: 12px;
+      margin-top: 1rem;
+    }
+    .swipe-zone {
+      height: 300px;
+      background: #222;
+      border-radius: 12px;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      font-weight: bold;
+      border: 2px dashed #666;
+      color: #ccc;
+    }
+    .list-group-item {
+      background-color: #1e1e1e;
+      color: white;
+      border: 1px solid #444;
+    }
+    .settings-section {
+      background-color: #1e1e1e;
+      border-radius: 15px;
+      padding: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- تسجيل الدخول -->
+  <div class="container py-4 text-center">
+    <h1 class="mb-4">هل شاهدته؟</h1>
+    <button class="btn btn-outline-light mb-3" onclick="signInWithGoogle()">تسجيل الدخول باستخدام Google</button>
+    <br/>
+    <button class="btn btn-secondary mb-3" onclick="continueAsGuest()">الاستمرار كضيف</button>
+  </div>
+
+  <!-- منطقة السحب -->
+  <div class="container">
+    <div class="swipe-zone" id="swipeZone">
+      اسحب لليمين ⇨ "نعم" | لليسار ⇦ "لا"
+    </div>
+    <div class="movie-card">
+      <h4>اسم الفيلم: Interstellar</h4>
+      <p>الوصف: فيلم خيال علمي يتناول السفر عبر الزمن واستكشاف الفضاء.</p>
+      <img src="https://image.tmdb.org/t/p/w780/nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg" alt="Interstellar" class="img-fluid"/>
+    </div>
+  </div>
+
+  <!-- القوائم -->
+  <div class="container mt-4">
+    <h3>قوائمك:</h3>
+    <ul class="list-group mb-3">
+      <li class="list-group-item">📌 المفضلة</li>
+      <li class="list-group-item">🕒 لاحقًا</li>
+      <li class="list-group-item">🎬 المنتظرة</li>
+    </ul>
+  </div>
+
+  <!-- الإعدادات -->
+  <div class="container mb-5 settings-section">
+    <h3>⚙️ الإعدادات</h3>
+    <div class="form-check form-switch mb-3">
+      <input class="form-check-input" type="checkbox" id="darkModeSwitch">
+      <label class="form-check-label" for="darkModeSwitch">الوضع المظلم</label>
+    </div>
+    <div class="mb-3">
+      <label for="languageSelect" class="form-label">🌐 اللغة:</label>
+      <select class="form-select" id="languageSelect">
+        <option value="ar" selected>العربية</option>
+        <option value="en">English</option>
+      </select>
+    </div>
+    <button class="btn btn-outline-info" onclick="shareApp()">🔗 مشاركة التطبيق</button>
+    <p class="mt-2 text-muted small">ملاحظة: زر المشاركة يعمل على أجهزة الهاتف فقط.</p>
+  </div>
+
+  <!-- Firebase (جاهز للربط لاحقًا) -->
+  <script type="module">
+    function signInWithGoogle() {
+      alert("سيتم تسجيل الدخول عبر Firebase قريبًا.");
+    }
+
+    function continueAsGuest() {
+      alert("تم الدخول كضيف.");
+    }
+
+    function shareApp() {
+      if (navigator.share) {
+        navigator.share({ title: "هل شاهدته؟", url: window.location.href });
+      } else {
+        alert("المشاركة غير مدعومة على هذا المتصفح.");
+      }
+    }
+
+    const swipeZone = document.getElementById("swipeZone");
+    let startX = 0;
+    swipeZone.addEventListener("touchstart", e => startX = e.touches[0].clientX);
+    swipeZone.addEventListener("touchend", e => {
+      let endX = e.changedTouches[0].clientX;
+      let delta = endX - startX;
+      if (delta > 50) alert("✔️ أضفت الفيلم إلى قائمة شاهدته");
+      else if (delta < -50) alert("❌ تجاهلت الفيلم");
+    });
+  </script>
+
+</body>
+</html>
