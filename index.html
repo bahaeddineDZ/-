@@ -1,69 +1,77 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>هل شاهدته؟</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background: linear-gradient(to bottom right, #222, #444);
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(to left, #1f1f1f, #2c2c2c);
       color: white;
-      padding: 50px;
-    }
-    .login-box {
-      background: #111;
-      padding: 30px;
-      border-radius: 10px;
-      max-width: 400px;
-      margin: auto;
-      box-shadow: 0 0 20px rgba(255,255,255,0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
     }
     h1 {
-      font-size: 2.5em;
+      font-size: 3em;
       margin-bottom: 30px;
     }
-    button {
-      width: 100%;
-      padding: 15px;
-      margin: 10px 0;
-      font-size: 1em;
+    .btn {
+      background-color: #ff6b00;
       border: none;
-      border-radius: 8px;
+      padding: 15px 30px;
+      margin: 10px;
+      border-radius: 12px;
+      font-size: 1.2em;
       cursor: pointer;
       transition: 0.3s;
     }
-    .google {
-      background: #db4437;
-      color: white;
-    }
-    .guest {
-      background: #888;
-      color: white;
-    }
-    button:hover {
-      opacity: 0.9;
+    .btn:hover {
+      background-color: #e65a00;
     }
   </style>
 </head>
 <body>
-  <div class="login-box">
-    <h1>هل شاهدته؟</h1>
-    <button class="google" onclick="loginWithGoogle()">تسجيل الدخول بحساب Google</button>
-    <button class="guest" onclick="continueAsGuest()">الاستمرار كضيف</button>
-  </div>
 
-  <script>
-    function loginWithGoogle() {
-      // توجيه لتسجيل الدخول بجوجل (Firebase Auth)
-      window.location.href = "main.html?mode=google";
-    }
+  <h1>هل شاهدته؟</h1>
+  <button class="btn" onclick="loginWithGoogle()">تسجيل الدخول باستخدام Google</button>
+  <button class="btn" onclick="continueAsGuest()">الاستمرار كضيف</button>
 
-    function continueAsGuest() {
-      // توجيه كضيف دون تسجيل الدخول
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAt7ihMD5nIYGbdoxIaKtKVgB-t5P-6ucA",
+      authDomain: "did-you-watch-778e1.firebaseapp.com",
+      projectId: "did-you-watch-778e1",
+      storageBucket: "did-you-watch-778e1.appspot.com",
+      messagingSenderId: "147619265734",
+      appId: "1:147619265734:web:a419bcd602fed4045febc7",
+      measurementId: "G-4RYVSESNJ8"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    window.loginWithGoogle = () => {
+      signInWithPopup(auth, provider)
+        .then((result) => {
+          window.location.href = "main.html?mode=google";
+        })
+        .catch((error) => {
+          alert("فشل تسجيل الدخول: " + error.message);
+        });
+    };
+
+    window.continueAsGuest = () => {
       window.location.href = "main.html?mode=guest";
-    }
+    };
   </script>
 </body>
 </html>
