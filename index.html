@@ -15,11 +15,14 @@
       align-items: center;
       justify-content: center;
       height: 100vh;
+      text-align: center;
     }
+
     h1 {
       font-size: 3em;
       margin-bottom: 30px;
     }
+
     .btn {
       background-color: #ff6b00;
       border: none;
@@ -30,6 +33,7 @@
       cursor: pointer;
       transition: 0.3s;
     }
+
     .btn:hover {
       background-color: #e65a00;
     }
@@ -43,7 +47,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAt7ihMD5nIYGbdoxIaKtKVgB-t5P-6ucA",
@@ -70,7 +74,13 @@
     };
 
     window.continueAsGuest = () => {
-      window.location.href = "main.html?mode=guest";
+      signInAnonymously(auth)
+        .then(() => {
+          window.location.href = "main.html?mode=guest";
+        })
+        .catch((error) => {
+          alert("فشل الدخول كضيف: " + error.message);
+        });
     };
   </script>
 </body>
