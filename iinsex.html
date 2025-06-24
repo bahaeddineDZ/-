@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>هل شاهدته؟</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(to left, #1f1f1f, #2c2c2c);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    h1 {
+      font-size: 3em;
+      margin-bottom: 30px;
+    }
+    .btn {
+      background-color: #ff6b00;
+      border: none;
+      padding: 15px 30px;
+      margin: 10px;
+      border-radius: 12px;
+      font-size: 1.2em;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .btn:hover {
+      background-color: #e65a00;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>هل شاهدته؟</h1>
+  <button class="btn" onclick="loginWithGoogle()">تسجيل الدخول باستخدام Google</button>
+  <button class="btn" onclick="continueAsGuest()">الاستمرار كضيف</button>
+
+  <script type="module">
+    // Firebase إعداد Firebase
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAt7ihMD5nIYGbdoxIaKtKVgB-t5P-6ucA",
+      authDomain: "did-you-watch-778e1.firebaseapp.com",
+      projectId: "did-you-watch-778e1",
+      storageBucket: "did-you-watch-778e1.appspot.com",
+      messagingSenderId: "147619265734",
+      appId: "1:147619265734:web:a419bcd602fed4045febc7",
+      measurementId: "G-4RYVSESNJ8"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    window.loginWithGoogle = () => {
+      signInWithPopup(auth, provider)
+        .then((result) => {
+          window.location.href = "main.html?mode=google";
+        })
+        .catch((error) => {
+          alert("فشل تسجيل الدخول: " + error.message);
+        });
+    };
+
+    window.continueAsGuest = () => {
+      window.location.href = "main.html?mode=guest";
+    };
+  </script>
+</body>
+</html>
