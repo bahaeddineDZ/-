@@ -5,6 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>هل شاهدته؟</title>
+  <meta name="description" content="موقع لاختيار وتسجيل الأفلام التي شاهدتها أو التي تنوي مشاهدتها - سجل دخولك وابدأ رحلتك السينمائية!">
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <style>
@@ -149,12 +150,17 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
-    function signInWithGoogle() {
+    let loginInProgress = false;
+function signInWithGoogle() {
+  if (loginInProgress) return;
+  loginInProgress = true;
       const provider = new firebase.auth.GoogleAuthProvider();
       auth.signInWithPopup(provider).then(result => {
         document.getElementById("loginOverlay").style.display = "none";
         fetchMovies();
+      loginInProgress = false;
       }).catch(error => {
+      loginInProgress = false;
         alert("فشل تسجيل الدخول: " + error.message);
       });
     }
@@ -194,7 +200,13 @@
       const movie = movies[index];
       poster.src = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
       desc.innerText = movie.overview || 'لا يوجد وصف متاح.';
-      document.body.style.backgroundImage = `url('https://image.tmdb.org/t/p/original${movie.backdrop_path}')`;
+      
+      if (movie.backdrop_path) {
+        document.body.style.backgroundImage = `url('https://image.tmdb.org/t/p/original${movie.backdrop_path}')`;
+      } else {
+        document.body.style.backgroundImage = "url('https://source.unsplash.com/1600x900/?cinema,movie,abstract')";
+      }
+    
     }
 
     function vote(seen) {
