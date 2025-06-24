@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar">
 <head>
@@ -163,7 +164,7 @@
       const movie = movies[index];
       if (!dataStore[listName].some(m => m.id === movie.id)) {
         dataStore[listName].push(movie);
-        alert(`✅ تمت إضافة \"${movie.title}\" إلى ${translateListName(listName)}.`);
+        alert(`✅ تمت إضافة "${movie.title}" إلى ${translateListName(listName)}.`);
       }
     }
 
