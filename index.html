@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -68,4 +69,46 @@
     <h3>⚙️ الإعدادات</h3>
     <div class="form-check form-switch mb-2">
       <input class="form-check-input" type="checkbox" id="darkModeSwitch">
-      <label class="form-check-label" for="darkMod
+      <label class="form-check-label" for="darkModeSwitch">الوضع المظلم</label>
+    </div>
+    <div class="mb-2">
+      <label for="languageSelect" class="form-label">🌐 اللغة:</label>
+      <select class="form-select" id="languageSelect">
+        <option value="ar" selected>العربية</option>
+        <option value="en">English</option>
+      </select>
+    </div>
+    <button class="btn btn-outline-info" onclick="shareApp()">🔗 مشاركة التطبيق</button>
+  </div>
+
+  <!-- Firebase (جاهز للربط لاحقًا) -->
+  <script type="module">
+    // Placeholder: سيتم لاحقًا استبداله بكود Firebase الحقيقي
+    function signInWithGoogle() {
+      alert("سيتم تسجيل الدخول عبر Firebase قريبًا.");
+    }
+
+    function continueAsGuest() {
+      alert("تم الدخول كضيف.");
+    }
+
+    function shareApp() {
+      navigator.share
+        ? navigator.share({ title: "هل شاهدته؟", url: window.location.href })
+        : alert("المشاركة غير مدعومة على هذا المتصفح.");
+    }
+
+    // سحب لليمين / لليسار (بسيطة)
+    const swipeZone = document.getElementById("swipeZone");
+    let startX = 0;
+    swipeZone.addEventListener("touchstart", e => startX = e.touches[0].clientX);
+    swipeZone.addEventListener("touchend", e => {
+      let endX = e.changedTouches[0].clientX;
+      let delta = endX - startX;
+      if (delta > 50) alert("✔️ أضفت الفيلم إلى قائمة شاهدته");
+      else if (delta < -50) alert("❌ تجاهلت الفيلم");
+    });
+  </script>
+
+</body>
+</html>
