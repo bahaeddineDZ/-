@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>هل شاهدت هذا الفيلم؟</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>هل شاهدته؟</title>
   <style>
     * {
       box-sizing: border-box;
@@ -45,6 +45,12 @@
       flex-grow: 1;
       padding: 2rem;
       backdrop-filter: blur(3px);
+      text-align: center;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-top: 0;
+      margin-bottom: 1.5rem;
     }
     img#poster {
       width: 250px;
@@ -55,6 +61,10 @@
     }
     .description {
       margin-bottom: 1rem;
+      font-size: 1rem;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
     }
     button.vote, button.action {
       font-size: 1rem;
@@ -69,7 +79,6 @@
     .fav { background-color: #ff4081; }
     .later { background-color: #2196f3; }
     .wait { background-color: #ff9800; }
-    h1 { margin-top: 0; }
   </style>
 </head>
 <body>
@@ -84,7 +93,7 @@
   </div>
 
   <div class="content">
-    <h1>هل شاهدت هذا الفيلم؟</h1>
+    <h1>هل شاهدته؟</h1>
     <img id="poster" src="" alt="بوستر الفيلم">
     <p class="description" id="description"></p>
     <div>
@@ -100,7 +109,7 @@
   </div>
 
   <script>
-    const apiKey = 'YOUR_TMDB_API_KEY';
+    const apiKey = 'c36ae90fce0a001a22eb48ec0b1d500d';
     let movies = [], index = 0;
     const poster = document.getElementById("poster");
     const desc = document.getElementById("description");
@@ -154,7 +163,7 @@
       const movie = movies[index];
       if (!dataStore[listName].some(m => m.id === movie.id)) {
         dataStore[listName].push(movie);
-        alert(`✅ تمت إضافة "${movie.title}" إلى ${translateListName(listName)}.`);
+        alert(`✅ تمت إضافة \"${movie.title}\" إلى ${translateListName(listName)}.`);
       }
     }
 
