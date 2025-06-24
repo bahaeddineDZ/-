@@ -1,262 +1,68 @@
-
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>هل شاهدته؟</title>
-  <meta name="description" content="موقع لاختيار وتسجيل الأفلام التي شاهدتها أو التي تنوي مشاهدتها - سجل دخولك وابدأ رحلتك السينمائية!">
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <style>
-    * { box-sizing: border-box; }
     body {
-      margin: 0;
-      font-family: Tahoma, sans-serif;
-      display: flex;
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      min-height: 100vh;
-      color: white;
-      transition: background-image 0.6s ease;
-    }
-    .sidebar {
-      width: 220px;
-      background-color: #111a;
-      padding: 1rem;
-      backdrop-filter: blur(4px);
-    }
-    .sidebar h2 {
-      font-size: 1.2rem;
-      margin-bottom: 1rem;
-    }
-    .sidebar button {
-      display: block;
-      width: 100%;
-      margin-bottom: 0.5rem;
-      padding: 10px;
-      border: none;
-      border-radius: 8px;
-      background-color: #222;
-      color: white;
-      cursor: pointer;
-      text-align: right;
-    }
-    .content {
-      flex-grow: 1;
-      padding: 2rem;
-      backdrop-filter: blur(3px);
+      font-family: Arial, sans-serif;
       text-align: center;
+      background: linear-gradient(to bottom right, #222, #444);
+      color: white;
+      padding: 50px;
+    }
+    .login-box {
+      background: #111;
+      padding: 30px;
+      border-radius: 10px;
+      max-width: 400px;
+      margin: auto;
+      box-shadow: 0 0 20px rgba(255,255,255,0.1);
     }
     h1 {
-      font-size: 2.5rem;
-      margin-top: 0;
-      margin-bottom: 1.5rem;
+      font-size: 2.5em;
+      margin-bottom: 30px;
     }
-    img#poster {
-      width: 250px;
-      border-radius: 12px;
-      box-shadow: 0 0 20px rgba(255,255,255,0.4);
-      margin-bottom: 1rem;
-      transition: all 0.5s ease;
-    }
-    .description {
-      margin-bottom: 1rem;
-      font-size: 1rem;
-      max-width: 500px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    button.vote, button.action {
-      font-size: 1rem;
-      padding: 8px 14px;
-      margin: 6px;
+    button {
+      width: 100%;
+      padding: 15px;
+      margin: 10px 0;
+      font-size: 1em;
       border: none;
-      border-radius: 10px;
+      border-radius: 8px;
       cursor: pointer;
+      transition: 0.3s;
     }
-    .yes { background-color: #4caf50; }
-    .no { background-color: #f44336; }
-    .fav { background-color: #ff4081; }
-    .later { background-color: #2196f3; }
-    .wait { background-color: #ff9800; }
-
-    .login-overlay {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background-color: rgba(0,0,0,0.85);
-      z-index: 1000;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
+    .google {
+      background: #db4437;
+      color: white;
     }
-    .login-overlay button {
-      margin: 10px;
-      padding: 12px 20px;
-      font-size: 1rem;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
+    .guest {
+      background: #888;
+      color: white;
     }
-    .google { background-color: #db4437; color: white; }
+    button:hover {
+      opacity: 0.9;
+    }
   </style>
 </head>
 <body>
-  <div class="login-overlay" id="loginOverlay">
-    <h1>مرحباً بك!</h1>
-    <p>سجل دخولك لاستخدام الموقع:</p>
-    <button class="google" onclick="signInWithGoogle()">الدخول عبر Google</button>
-  </div>
-
-  <div class="sidebar">
-    <h2>🎬 القائمة</h2>
-    <button onclick="logout()">🔓 تسجيل الخروج</button>
-    <button onclick="showList('liked')">❤️ أفلامي المفضلة</button>
-    <button onclick="showList('watched')">✅ شاهدتها</button>
-    <button onclick="showList('notwatched')">❌ لم أشاهدها</button>
-    <button onclick="showList('mustwatch')">⏳ للمشاهدة قريبًا</button>
-    <button onclick="showList('upcoming')">🚀 أفلام منتظرة</button>
-  </div>
-
-  <div class="content">
+  <div class="login-box">
     <h1>هل شاهدته؟</h1>
-    <img id="poster" src="" alt="بوستر الفيلم">
-    <p class="description" id="description"></p>
-    <div>
-      <button class="vote yes" onclick="vote(true)">✅ نعم</button>
-      <button class="vote no" onclick="vote(false)">❌ لا</button>
-    </div>
-    <div>
-      <button class="action fav" onclick="addTo('liked', true)">❤️ أضف للمفضلة</button>
-      <button class="action later" onclick="addTo('mustwatch', true)">⏳ للمشاهدة قريبًا</button>
-      <button class="action wait" onclick="addTo('upcoming', true)">🚀 من الأفلام المنتظرة</button>
-    </div>
-    <ul id="list"></ul>
+    <button class="google" onclick="loginWithGoogle()">تسجيل الدخول بحساب Google</button>
+    <button class="guest" onclick="continueAsGuest()">الاستمرار كضيف</button>
   </div>
 
   <script>
-    
-const firebaseConfig = {
-  apiKey: "AIzaSyAt7ihMD5nIYGbdoxIaKtKVgB-t5P-6ucA",
-  authDomain: "did-you-watch-778e1.firebaseapp.com",
-  projectId: "did-you-watch-778e1",
-  storageBucket: "did-you-watch-778e1.firebasestorage.app",
-  messagingSenderId: "147619265734",
-  appId: "1:147619265734:web:a419bcd602fed4045febc7",
-  measurementId: "G-4RYVSESNJ8"
-};
-
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-
-    let loginInProgress = false;
-function signInWithGoogle() {
-  if (loginInProgress) return;
-  loginInProgress = true;
-      const provider = new firebase.auth.GoogleAuthProvider();
-      auth.signInWithPopup(provider).then(result => {
-        document.getElementById("loginOverlay").style.display = "none";
-        fetchMovies();
-      loginInProgress = false;
-      }).catch(error => {
-      loginInProgress = false;
-        alert("فشل تسجيل الدخول: " + error.message);
-      });
+    function loginWithGoogle() {
+      // توجيه لتسجيل الدخول بجوجل (Firebase Auth)
+      window.location.href = "main.html?mode=google";
     }
 
-    function logout() {
-      auth.signOut().then(() => {
-        location.reload();
-      });
-    }
-
-    let movies = [], index = 0;
-    const poster = document.getElementById("poster");
-    const desc = document.getElementById("description");
-    const list = document.getElementById("list");
-
-    const dataStore = {
-      watched: [],
-      notwatched: [],
-      liked: [],
-      mustwatch: [],
-      upcoming: []
-    };
-
-    async function fetchMovies() {
-      const res = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=c36ae90fce0a001a22eb48ec0b1d500d&language=ar`);
-      const data = await res.json();
-      movies = data.results;
-      showMovie();
-    }
-
-    function showMovie() {
-      if (index >= movies.length) {
-        poster.style.display = 'none';
-        desc.innerText = '🎉 انتهت القائمة';
-        return;
-      }
-      const movie = movies[index];
-      poster.src = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
-      desc.innerText = movie.overview || 'لا يوجد وصف متاح.';
-      
-      if (movie.backdrop_path) {
-        document.body.style.backgroundImage = `url('https://image.tmdb.org/t/p/original${movie.backdrop_path}')`;
-      } else {
-        document.body.style.backgroundImage = "url('https://source.unsplash.com/1600x900/?cinema,movie,abstract')";
-      }
-    
-    }
-
-    function vote(seen) {
-      const movie = movies[index];
-      if (seen) {
-        poster.style.filter = 'brightness(150%)';
-        dataStore.watched.push(movie);
-      } else {
-        poster.style.opacity = '0';
-        dataStore.notwatched.push(movie);
-      }
-      setTimeout(() => {
-        poster.style.filter = '';
-        poster.style.opacity = '1';
-        index++;
-        showMovie();
-      }, 600);
-    }
-
-    function addTo(listName, next = false) {
-      const movie = movies[index];
-      if (!dataStore[listName].some(m => m.id === movie.id)) {
-        dataStore[listName].push(movie);
-        alert(`✅ تمت إضافة "${movie.title}" إلى ${translateListName(listName)}.`);
-      }
-      if (next) {
-        index++;
-        showMovie();
-      }
-    }
-
-    function showList(type) {
-      list.innerHTML = '';
-      dataStore[type].forEach(movie => {
-        const li = document.createElement("li");
-        li.textContent = movie.title;
-        list.appendChild(li);
-      });
-    }
-
-    function translateListName(key) {
-      return {
-        liked: 'المفضلة',
-        watched: 'قائمة المشاهدة',
-        notwatched: 'قائمة غير المشاهدة',
-        mustwatch: 'للمشاهدة لاحقًا',
-        upcoming: 'الأفلام المنتظرة'
-      }[key] || key;
+    function continueAsGuest() {
+      // توجيه كضيف دون تسجيل الدخول
+      window.location.href = "main.html?mode=guest";
     }
   </script>
 </body>
