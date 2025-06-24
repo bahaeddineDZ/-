@@ -5,10 +5,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>هل شاهدته؟</title>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: Tahoma, sans-serif;
@@ -80,16 +80,43 @@
     .fav { background-color: #ff4081; }
     .later { background-color: #2196f3; }
     .wait { background-color: #ff9800; }
+
+    .login-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0,0,0,0.85);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .login-overlay button {
+      margin: 10px;
+      padding: 12px 20px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .google { background-color: #db4437; color: white; }
   </style>
 </head>
 <body>
+  <div class="login-overlay" id="loginOverlay">
+    <h1>مرحباً بك!</h1>
+    <p>سجل دخولك لاستخدام الموقع:</p>
+    <button class="google" onclick="signInWithGoogle()">الدخول عبر Google</button>
+  </div>
+
   <div class="sidebar">
     <h2>🎬 القائمة</h2>
-    <button onclick="login()">🔐 تسجيل الدخول</button>
+    <button onclick="logout()">🔓 تسجيل الخروج</button>
     <button onclick="showList('liked')">❤️ أفلامي المفضلة</button>
     <button onclick="showList('watched')">✅ شاهدتها</button>
     <button onclick="showList('notwatched')">❌ لم أشاهدها</button>
-    <button onclick="showList('mustwatch')">⏳ يجب أن أشاهدها قريبًا</button>
+    <button onclick="showList('mustwatch')">⏳ للمشاهدة قريبًا</button>
     <button onclick="showList('upcoming')">🚀 أفلام منتظرة</button>
   </div>
 
@@ -102,15 +129,42 @@
       <button class="vote no" onclick="vote(false)">❌ لا</button>
     </div>
     <div>
-      <button class="action fav" onclick="addTo('liked')">❤️ أضف للمفضلة</button>
-      <button class="action later" onclick="addTo('mustwatch')">⏳ للمشاهدة قريبًا</button>
-      <button class="action wait" onclick="addTo('upcoming')">🚀 من الأفلام المنتظرة</button>
+      <button class="action fav" onclick="addTo('liked', true)">❤️ أضف للمفضلة</button>
+      <button class="action later" onclick="addTo('mustwatch', true)">⏳ للمشاهدة قريبًا</button>
+      <button class="action wait" onclick="addTo('upcoming', true)">🚀 من الأفلام المنتظرة</button>
     </div>
     <ul id="list"></ul>
   </div>
 
   <script>
-    const apiKey = 'c36ae90fce0a001a22eb48ec0b1d500d';
+    const firebaseConfig = {
+      apiKey: "AIzaSyDRcT_Ha4_oSa5w719Jyz_V5PCdrrhlRa8",
+      authDomain: "did-you-watch-90ade.firebaseapp.com",
+      projectId: "did-you-watch-90ade",
+      storageBucket: "did-you-watch-90ade.firebasestorage.app",
+      messagingSenderId: "166243400303",
+      appId: "1:166243400303:web:a1e849acc59bd0fe202b9a",
+      measurementId: "G-QHCEF5QW9K"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    function signInWithGoogle() {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider).then(result => {
+        document.getElementById("loginOverlay").style.display = "none";
+        fetchMovies();
+      }).catch(error => {
+        alert("فشل تسجيل الدخول: " + error.message);
+      });
+    }
+
+    function logout() {
+      auth.signOut().then(() => {
+        location.reload();
+      });
+    }
+
     let movies = [], index = 0;
     const poster = document.getElementById("poster");
     const desc = document.getElementById("description");
@@ -125,7 +179,7 @@
     };
 
     async function fetchMovies() {
-      const res = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}&language=ar`);
+      const res = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=c36ae90fce0a001a22eb48ec0b1d500d&language=ar`);
       const data = await res.json();
       movies = data.results;
       showMovie();
@@ -160,11 +214,15 @@
       }, 600);
     }
 
-    function addTo(listName) {
+    function addTo(listName, next = false) {
       const movie = movies[index];
       if (!dataStore[listName].some(m => m.id === movie.id)) {
         dataStore[listName].push(movie);
         alert(`✅ تمت إضافة "${movie.title}" إلى ${translateListName(listName)}.`);
+      }
+      if (next) {
+        index++;
+        showMovie();
       }
     }
 
@@ -186,12 +244,6 @@
         upcoming: 'الأفلام المنتظرة'
       }[key] || key;
     }
-
-    function login() {
-      alert('تم تسجيل الدخول كمستخدم محلي.');
-    }
-
-    fetchMovies();
   </script>
 </body>
 </html>
